@@ -1,0 +1,108 @@
+<div class="container-fluid">    
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header card-header-warning">
+                    <h4 class="card-title" >Ecritures</h4>
+                    <p class="card-category"> CheckList</p>
+                </div>
+                <div class="card-body" >
+                    <div class="table-responsive-sm">
+                        <table class="table table-sm">
+                            <thead class=" text-primary" >                                
+                                <th *ngFor="let col of colListEcriture" class="text-center">
+                                    {{ col }}
+                                </th>     
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let rowTitle of rowListEcriture ; let i = index">
+                                    <td class="text-right">
+                                        {{ rowTitle }}
+                                    </td>                                    
+                                    <td  *ngFor="let col of colListEcriture ; let j = index" class="text-right">
+                                        <i class="material-icons text-warning" *ngIf="map[i][j]==0">error_outline</i>
+                                        <i class="material-icons text-primary" *ngIf="map[i][j]!=0 && map[i][j]">check</i>
+                                        <span *ngIf="map[i][j]>0" class="text-primary">{{ map[i][j] |  number:'0.0-0':'fr' }}€</span>
+                                        <span *ngIf="map[i][j]<0" class="text-primary">({{ -1*map[i][j] |  number:'0.0-0':'fr' }})€</span>
+                                    </td>
+                                </tr>                               
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header card-header-warning">
+                    <h4 class="card-title ">Comptes</h4>
+                    <p class="card-category"> CheckList</p>
+                </div>
+                <div class="card-body" style="max-height: 500px; overflow: auto;">
+                    <div class="table-responsive-sm">
+                        <table class="table table-sm">
+                            <thead class=" text-primary" >                                
+                                <th *ngFor="let col of colListCompte" class="text-center">
+                                    {{ col }}
+                                </th>                                
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let rowTitle of rowListCompte ; let i = index">
+                                    <td class="text-right">
+                                        {{ rowTitle }}
+                                    </td>                                    
+                                    <td  *ngFor="let col of colListCompte ; let j = index" class="text-right">
+                                        <i class="material-icons text-warning" *ngIf="mapCompte[i][j]==0">error_outline</i>
+                                        <i class="material-icons text-primary" *ngIf="mapCompte[i][j]!=0 && mapCompte[i][j]">check</i>
+                                        <span *ngIf="mapCompte[i][j]>0" class="text-primary">{{ mapCompte[i][j] |  number:'0.0-0':'fr' }}€</span>
+                                        <span *ngIf="mapCompte[i][j]<0" class="text-primary">({{ -1*mapCompte[i][j] |  number:'0.0-0':'fr' }})€</span>
+                                    </td>
+                                </tr>                               
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header card-header-success">
+                    <h4 class="card-title ">Solde 421 inf 70% solde 641</h4>
+                    <p class="card-category">Solde 421 hors journal banque doit être inférieur à 70% du solde 641</p>
+                </div>
+                <div class="card-body" style="max-height: 300px; overflow: auto;">
+                    <div class="table-responsive-sm">
+                        <table class="table table-sm">
+                            <thead class=" text-primary" >                                
+                                <th *ngFor="let col of colListCompte64" class="text-center">
+                                    {{ col }}
+                                </th>                                
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let rowTitle of rowListCompte64 ; let i = index">
+                                    <td class="text-right">
+                                        {{ rowTitle }}
+                                    </td>                                    
+                                    <td  *ngFor="let col of colListCompte64 ; let j = index" class="text-right">
+                                        <i class="material-icons text-warning" *ngIf="mapCompte64[i][j]==0">error_outline</i>
+                                        <i class="material-icons text-primary" *ngIf="mapCompte64[i][j]!=0 && mapCompte64[i][j]">check</i>                                        
+                                        <span *ngIf="mapCompte64[i][j]<0" class="text-primary">
+                                            <span *ngIf="rowTitle!='Status'" class="text-primary">({{ 1*-mapCompte64[i][j] |  number:'0.0-0':'fr' }})€</span>
+                                        </span>
+                                        <span *ngIf="mapCompte64[i][j]>0" class="text-primary">
+                                            <span *ngIf="rowTitle!='Status'" class="text-primary">{{ mapCompte64[i][j] |  number:'0.0-0':'fr' }}€</span>
+                                        </span>
+                                    </td>
+                                </tr>                               
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

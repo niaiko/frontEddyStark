@@ -1,0 +1,49 @@
+<div class="main-content">
+    <div class="container-fluid">
+        <mat-tab-group>
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <i class="material-icons">dashboard</i>
+                    KPI
+                </ng-template>
+                <app-chiffre-affaire></app-chiffre-affaire>                                
+            </mat-tab>
+        
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <i class="material-icons">apartment</i>
+                    Fiche entreprise
+                </ng-template>
+                <app-fiche-entreprise></app-fiche-entreprise>                
+            </mat-tab>
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <i class="material-icons">assignment</i>
+                    Bilan & Résultat
+                </ng-template>
+                <app-bilan></app-bilan>                
+            </mat-tab>            
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <i class="material-icons">article</i>
+                    Avant & Après
+                </ng-template>
+                <app-avant-apres></app-avant-apres>
+            </mat-tab>
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <i class="material-icons">account_balance</i>
+                    Rapprochement bancaire
+                </ng-template>
+                <app-rapprochement></app-rapprochement>
+            </mat-tab>
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <i class="material-icons">history</i>
+                    Historique fichier
+                </ng-template>
+                <app-historique-fichier></app-historique-fichier>                    
+            </mat-tab>            
+        </mat-tab-group>        
+    </div>
+</div>

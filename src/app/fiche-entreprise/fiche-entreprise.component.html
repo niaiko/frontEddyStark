@@ -1,0 +1,739 @@
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-6 col-md-12" *ngIf="!siren">
+                <form form [formGroup]="form" (ngSubmit)="onSubmit()">
+                    <span class="bmd-form-group">
+                        <div class="input-group no-border">
+                            <input type="text" value="" class="form-control" placeholder="Entreprise: siren"
+                                formControlName="search">
+                            <button mat-raised-button type="submit" class="btn btn-white btn-round btn-just-icon">
+                                <i class="material-icons">search</i>
+                                <div class="ripple-container"></div>
+                            </button>
+                        </div>
+                    </span>
+                </form>
+            </div>
+            <div class="col-lg-6 col-md-12" *ngIf="!isUser() && fiche">
+                <form form [formGroup]="formUser">
+                    <mat-form-field class="example-full-width" *ngIf="!flagValid">
+                        <mat-label>Email</mat-label>
+                        <input matInput placeholder="pat@example.com" formControlName="email" required>
+                        <mat-error *ngIf="!flagValid && hasError('email', 'required')">L'email est requis</mat-error>
+                    </mat-form-field>
+                    <button mat-raised-button color="primary" *ngIf="!flagValid" (click)="ouvrirUnDossier(fiche.denomination)">Ouvrir un
+                        dossier</button>
+                    <button mat-raised-button color="warn" *ngIf="flagValid" (click)="fermerLeDossier()">Fermer le
+                        dossier</button>
+                </form>
+
+            </div>
+        </div>
+        <div *ngIf="fiche">
+            <div class="row">
+                <div class="col-lg-6 col-md-12">
+                    <div class="card">
+                        <div class="card-header card-header-info">
+                            <h4 class="card-title">Date RJ</h4>
+                            <p class="card-category">{{ fiche.nom_entreprise }}</p>
+                        </div>
+                        <div class="card-body">
+                            <form form [formGroup]="formPara">
+                                <div class="row">
+                                    <div class="col-lg-12 col-md-12">
+                                        <mat-form-field appearance="fill">
+                                            <mat-label>Date RJ</mat-label>
+                                            <input matInput [matDatepicker]="picker1" (dateChange)="setRedressement($event)" formControlName="redressementDate">
+                                            <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                                            <mat-datepicker #picker1></mat-datepicker>
+                                        </mat-form-field>
+                                    </div>
+                                    <!--<div class="col-lg-6 col-md-12">
+                                        <mat-form-field appearance="fill">
+                                            <mat-label>Date d'échéance</mat-label>
+                                            <input matInput [matDatepicker]="picker2" (dateChange)="setEcheance($event)" formControlName="echeanceDate">
+                                            <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                                            <mat-datepicker #picker2></mat-datepicker>
+                                        </mat-form-field>
+                                    </div>-->
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-12">
+                    <div class="card">
+                        <div class="card-header card-header-warning">
+                            <h4 class="card-title">Administrateur Judiciaire</h4>
+                            <p class="card-category">{{ fiche.nom_entreprise }}</p>
+                        </div>
+                        <div class="card-body table-responsive" style="max-height: 300px; overflow: auto;">
+                            <div *ngFor="let tier of administrateurs">
+                                <div class="container-fluid ">
+                                    <div class="mb-4">
+                                        <div class="row">
+                                            <span class="col-lg-12 col-md-12">
+                                                <div class="row">
+                                                    <span class="col-lg-6 col-md-6">
+                                                        <b>{{ tier.nom }}</b>       
+                                                    </span>                                                    
+                                                    <span class="col-lg-6 col-md-6" > 
+                                                        <div class="row">
+                                                            {{ tier.mail }}
+                                                        </div> 
+                                                        <div class="row text-right">
+                                                            {{ tier.contact }}
+                                                        </div>                                                                                                                      
+                                                    </span>                                                                                       
+                                                </div>
+                                            </span>                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <span *ngIf="administrateurs.length==0">
+                                non renseigné
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-6 col-md-12">
+                    <div class="card">
+                        <div class="card-header card-header-danger">
+                            <h4 class="card-title">Juge Commissaire</h4>
+                            <p class="card-category">{{ fiche.nom_entreprise }}</p>
+                        </div>
+                        <div class="card-body">
+                            <div *ngIf="isUser()">
+                                <app-tiers-form [typeTiers]="1" [siren]="fiche.siren" [refDossier]="refDossier" *ngIf="isUser()">
+                                </app-tiers-form>
+                                <mat-divider></mat-divider>
+                            </div>
+                            <div class="table-responsive" style="max-height: 300px; overflow: auto;">
+                                <div *ngFor="let juge of juges">
+                                    <div class="container-fluid ">
+                                        <div class="mb-4">
+                                            <div class="row">
+                                                <span class="col-lg-11 col-md-11">
+                                                    <div class="row">
+                                                        <span class="col-lg-6 col-md-6">
+                                                            <b>{{ juge.nom }}</b>       
+                                                        </span>                                                    
+                                                        <span class="col-lg-6 col-md-6" > 
+                                                            <div class="row">
+                                                                {{ juge.mail }}
+                                                            </div> 
+                                                            <div class="row text-right">
+                                                                {{ juge.contact }}
+                                                            </div>                                                                                                                      
+                                                        </span>                                                                                       
+                                                    </div>
+                                                </span>
+                                                <span class="col-lg-1 col-md-1 text-right" *ngIf="isUser()">                                                    
+                                                    <button mat-raised-button type="button" matTooltip="supprimer" [matTooltipPosition]="'above'" class="btn btn-danger btn-link btn-sm btn-just-icon"
+                                                    (click)="deleteTiers(tier.mail,tier.nom,'1')" >
+                                                        <i class="material-icons">close</i>
+                                                    </button>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span *ngIf="juges.length==0">
+                                    non renseigné
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-12">
+                    <div class="card">
+                        <div class="card-header card-header-danger">
+                            <h4 class="card-title">Mandataire Judiciaire</h4>
+                            <p class="card-category">{{ fiche.nom_entreprise }}</p>
+                        </div>
+                        <div *ngIf="isUser()">
+                            <app-tiers-form [typeTiers]="2" [siren]="fiche.siren" [refDossier]="refDossier" *ngIf="isUser()">
+                            </app-tiers-form>
+                            <mat-divider></mat-divider>
+                        </div>
+                        <div class="card-body table-responsive" style="max-height: 300px; overflow: auto;">
+                            <div *ngFor="let tier of mandataires">
+                                <div class="container-fluid ">
+                                    <div class="mb-4">
+                                        <div class="row">
+                                            <span class="col-lg-11 col-md-11">
+                                                <div class="row">
+                                                    <span class="col-lg-6 col-md-6">
+                                                        <b>{{ tier.nom }}</b>       
+                                                    </span>                                                    
+                                                    <span class="col-lg-6 col-md-6" > 
+                                                        <div class="row">
+                                                            {{ tier.mail }}
+                                                        </div> 
+                                                        <div class="row text-right">
+                                                            {{ tier.contact }}
+                                                        </div>                                                                                                                      
+                                                    </span>                                                                                       
+                                                </div>
+                                            </span>
+                                            <span class="col-lg-1 col-md-1 text-right" *ngIf="isUser()">                                                    
+                                                <button mat-raised-button type="button" matTooltip="supprimer" [matTooltipPosition]="'above'" class="btn btn-danger btn-link btn-sm btn-just-icon"
+                                                (click)="deleteTiers(tier.mail,tier.nom,'2')" >
+                                                    <i class="material-icons">close</i>
+                                                </button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <span *ngIf="mandataires.length==0">
+                                non renseigné
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-6 col-md-12">
+                    <div class="card">
+                        <div class="card-header card-header-info">
+                            <h4 class="card-title">CAC de dossier</h4>
+                            <p class="card-category">{{ fiche.nom_entreprise }}</p>
+                        </div>
+                        <div class="card-body">
+                            <div *ngIf="isUser()">
+                                <app-tiers-form [typeTiers]="9" [siren]="fiche.siren" [refDossier]="refDossier" *ngIf="isUser()">
+                                </app-tiers-form>
+                                <mat-divider></mat-divider>
+                            </div>                            
+                            <div class="table-responsive" style="max-height: 300px; overflow: auto;">
+                                <div *ngFor="let tier of commissaires">
+                                    <div class="container-fluid ">
+                                        <div class="mb-4">
+                                            <div class="row">
+                                                <span class="col-lg-11 col-md-11">
+                                                    <div class="row">
+                                                        <span class="col-lg-6 col-md-6">
+                                                            <b>{{ tier.nom }}</b>       
+                                                        </span>                                                    
+                                                        <span class="col-lg-6 col-md-6" > 
+                                                            <div class="row">
+                                                                {{ tier.mail }}
+                                                            </div> 
+                                                            <div class="row text-right">
+                                                                {{ tier.contact }}
+                                                            </div>                                                                                                                      
+                                                        </span>                                                                                       
+                                                    </div>
+                                                </span>
+                                                <span class="col-lg-1 col-md-1 text-right" *ngIf="isUser()">                                                    
+                                                    <button mat-raised-button type="button" matTooltip="supprimer" [matTooltipPosition]="'above'" class="btn btn-danger btn-link btn-sm btn-just-icon"
+                                                    (click)="deleteTiers(tier.mail,tier.nom,'9')" >
+                                                        <i class="material-icons">close</i>
+                                                    </button>
+                                                </span>
+                                            </div>                                              
+                                        </div>
+                                    </div>
+                                </div>
+                                <span *ngIf="commissaires.length==0">
+                                    non renseigné
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+                <div class="col-lg-6 col-md-12">
+                    <div class="card">
+                        <div class="card-header card-header-warning">
+                            <h4 class="card-title">Avocat de dossier</h4>
+                            <p class="card-category">{{ fiche.nom_entreprise }}</p>
+                        </div>
+                        <div class="card-body">
+                            <div *ngIf="isUser()">
+                                <app-tiers-form [typeTiers]="3" [siren]="fiche.siren" [refDossier]="refDossier" *ngIf="isUser()">
+                                </app-tiers-form>
+                                <mat-divider></mat-divider>
+                            </div>
+                            <div class="table-responsive" style="max-height: 300px; overflow: auto;">
+                                <div *ngFor="let tier of avocats">
+                                    <div class="container-fluid ">
+                                        <div class="mb-4">
+                                            <div class="row">
+                                                <span class="col-lg-11 col-md-11">
+                                                    <div class="row">
+                                                        <span class="col-lg-6 col-md-6">
+                                                            <b>{{ tier.nom }}</b>       
+                                                        </span>                                                    
+                                                        <span class="col-lg-6 col-md-6" > 
+                                                            <div class="row">
+                                                                {{ tier.mail }}
+                                                            </div> 
+                                                            <div class="row text-right">
+                                                                {{ tier.contact }}
+                                                            </div>                                                                                                                      
+                                                        </span>                                                                                       
+                                                    </div>
+                                                </span>
+                                                <span class="col-lg-1 col-md-1 text-right" *ngIf="isUser()">                                                    
+                                                    <button mat-raised-button type="button" matTooltip="supprimer" [matTooltipPosition]="'above'" class="btn btn-danger btn-link btn-sm btn-just-icon"
+                                                    (click)="deleteTiers(tier.mail,tier.nom,'3')" >
+                                                        <i class="material-icons">close</i>
+                                                    </button>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span *ngIf="avocats.length==0">
+                                    non renseigné
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-6 col-md-12">
+                    <div class="card">
+                        <div class="card-header card-header-success">
+                            <h4 class="card-title">Expert Comptable</h4>
+                            <p class="card-category">{{ fiche.nom_entreprise }}</p>
+                        </div>
+                        <div class="card-body">
+                            <div *ngIf="isUser()">
+                                <app-tiers-form [typeTiers]="5" [siren]="fiche.siren" [refDossier]="refDossier" *ngIf="isUser()">
+                                </app-tiers-form>
+                                <mat-divider></mat-divider>
+                            </div>
+                            <div class="table-responsive" style="max-height: 300px; overflow: auto;">
+                                <div *ngFor="let tier of experts">
+                                    <div class="container-fluid ">
+                                        <div class="mb-4">
+                                            <div class="row">
+                                                <span class="col-lg-11 col-md-11">
+                                                    <div class="row">
+                                                        <span class="col-lg-6 col-md-6">
+                                                            <b>{{ tier.nom }}</b>       
+                                                        </span>                                                    
+                                                        <span class="col-lg-6 col-md-6" > 
+                                                            <div class="row">
+                                                                {{ tier.mail }}
+                                                            </div> 
+                                                            <div class="row text-right">
+                                                                {{ tier.contact }}
+                                                            </div>                                                                                                                      
+                                                        </span>                                                                                       
+                                                    </div>
+                                                </span>
+                                                <span class="col-lg-1 col-md-1 text-right" *ngIf="isUser()">                                                    
+                                                    <button mat-raised-button type="button" matTooltip="supprimer" [matTooltipPosition]="'above'" class="btn btn-danger btn-link btn-sm btn-just-icon"
+                                                    (click)="deleteTiers(tier.mail,tier.nom,'5')" >
+                                                        <i class="material-icons">close</i>
+                                                    </button>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span *ngIf="experts.length==0">
+                                    non renseigné
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-12">
+                    <div class="card">
+                        <div class="card-header card-header-success">
+                            <h4 class="card-title">Comptable</h4>
+                            <p class="card-category">{{ fiche.nom_entreprise }}</p>
+                        </div>
+                        <div class="card-body">
+                            <div *ngIf="isUser()">
+                                <app-tiers-form [typeTiers]="4" [siren]="fiche.siren" [refDossier]="refDossier" *ngIf="isUser()">
+                                </app-tiers-form>
+                                <mat-divider></mat-divider>
+                            </div>
+                            <div class="table-responsive" style="max-height: 300px; overflow: auto;">
+                                <div *ngFor="let tier of comptables">
+                                    <div class="container-fluid ">
+                                        <div class="mb-4">
+                                            <div class="row">
+                                                <span class="col-lg-11 col-md-11">
+                                                    <div class="row">
+                                                        <span class="col-lg-6 col-md-6">
+                                                            <b>{{ tier.nom }}</b>       
+                                                        </span>                                                    
+                                                        <span class="col-lg-6 col-md-6" > 
+                                                            <div class="row">
+                                                                {{ tier.mail }}
+                                                            </div> 
+                                                            <div class="row text-right">
+                                                                {{ tier.contact }}
+                                                            </div>                                                                                                                      
+                                                        </span>                                                                                       
+                                                    </div>
+                                                </span>
+                                                <span class="col-lg-1 col-md-1 text-right" *ngIf="isUser()">                                                    
+                                                    <button mat-raised-button type="button" matTooltip="supprimer" [matTooltipPosition]="'above'" class="btn btn-danger btn-link btn-sm btn-just-icon"
+                                                    (click)="deleteTiers(tier.mail,tier.nom,'4')" >
+                                                        <i class="material-icons">close</i>
+                                                    </button>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span *ngIf="comptables.length==0">
+                                    non renseigné
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!--info principal -->
+                <div class="col-lg-12 col-md-12">
+                    <div class="card">
+                        <div class="card-header card-header-danger">
+                            <h4 class="card-title">{{ fiche.nom_entreprise }}</h4>
+                            <p class="card-category">{{ fiche.siren }}</p>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <span class="col-lg-6 col-md-12"><b>Adresse :
+                                    </b>{{ fiche.siege.adresse_ligne_1 }}&nbsp;{{ fiche.siege.code_postal }}&nbsp;{{ fiche.siege.ville }}</span>
+                                <span class="col-lg-6 col-md-12"><b>Activité : </b>{{ fiche.libelle_code_naf }}</span>
+                            </div>
+                            <div class="row">
+                                <span class="col-lg-6 col-md-12"><b>Effectif :
+                                    </b>{{fiche.effectif}}&nbsp;(donnée&nbsp;{{ fiche.annee_effectif }})</span>
+                                <span class="col-lg-6 col-md-12"><b>Création :
+                                    </b>{{ fiche.date_creation_formate }}</span>
+                                <span class="col-lg-12 col-md-12"><b>Dirigeants : </b>
+                                    <span *ngFor="let dirigeant of fiche.representants">
+                                        <span *ngIf="!dirigeant.denomination">
+                                            {{ dirigeant.nom }}&nbsp;{{ dirigeant.prenom }},
+                                            &nbsp;</span>
+                                        <span *ngIf="dirigeant.denomination"> {{ dirigeant.denomination }}, </span>
+                                    </span>
+                                    <span *ngIf="fiche.representants.length==0">
+                                        non renseigné
+                                    </span>
+                                </span>
+                            </div>
+                            <div class="row">
+                                <span *ngIf="fiche.derniers_statuts">
+                                    <a class="nav-link"
+                                        (click)="getDocumentEntrepriseByToken(fiche.derniers_statuts.token)">
+                                        <i class="material-icons">picture_as_pdf</i>
+                                        {{fiche.derniers_statuts.nom_fichier_pdf}}
+                                    </a>
+                                </span>
+                                <span *ngIf="fiche.extrait_immatriculation">
+                                    <a class="nav-link"
+                                        (click)="getDocumentEntrepriseByToken(fiche.extrait_immatriculation.token)">
+                                        <i class="material-icons">picture_as_pdf</i>
+                                        Extrait d'immatriculation
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <!--info juridique-->
+                <div class="col-lg-6 col-md-12">
+                    <div class="card">
+                        <div class="card-header card-header-warning">
+                            <h4 class="card-title">Informations Juridiques</h4>
+                            <p class="card-category">{{ fiche.nom_entreprise }}</p>
+                        </div>
+                        <div class="card-body table-responsive">
+                            <div class="row">
+                                <span class="col-lg-6 col-md-12"><b>SIREN : </b> {{ fiche.siren_formate }}</span>
+                                <span class="col-lg-6 col-md-12"><b>SIRET (siège) : </b> {{ fiche.siege.siret_formate }}
+                                </span>
+                            </div>
+                            <div class="row">
+                                <span class="col-lg-12 col-md-12"><b>Forme juridique :</b>
+                                    {{ fiche.forme_juridique }}</span>
+                            </div>
+                            <div class="row">
+                                <span class="col-lg-12 col-md-12"><b>TVA intracommunautaire :</b>
+                                    {{ fiche.numero_tva_intracommunautaire }}</span>
+                            </div>
+                            <div class="row">
+                                <span class="col-lg-12 col-md-12"><b>Inscription au RCS</b>{{ fiche.statut_rcs }} (au
+                                    greffe
+                                    {{ fiche.greffe }})</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--activite-->
+                <div class="col-lg-6 col-md-12">
+                    <div class="card">
+                        <div class="card-header card-header-warning">
+                            <h4 class="card-title">Activité </h4>
+                            <p class="card-category">{{ fiche.nom_entreprise }}</p>
+                        </div>
+                        <div class="card-body table-responsive">
+                            <div class="row">
+                                <span class="col-lg-12 col-md-12"><b>Activité principale déclarée
+                                        :</b><br>{{ fiche.objet_social }}</span>
+                            </div>
+                            <div class="row">
+                                <span class="col-lg-12 col-md-12"><b>Code NAF ou APE :</b>{{ fiche.libelle_code_naf }}
+                                    ({{ fiche.code_naf }})</span>
+                            </div>
+                            <!--<div class="row">
+                                <span class="col-lg-12 col-md-12"><b>Régime de bénéfice :</b>Bénéfices Industriels et Commerciaux (BIC)</span>
+                            </div>-->
+                            <div class="row">
+                                <span class="col-lg-12 col-md-12"><b>Domaine d’activité
+                                        :</b>{{ fiche.domaine_activite}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <!--fiche identite-->
+                <div class="col-lg-6 col-md-12">
+                    <div class="card">
+                        <div class="card-header card-header-info">
+                            <h4 class="card-title">Fiche d'identité</h4>
+                            <p class="card-category">{{ fiche.nom_entreprise }}</p>
+                        </div>
+                        <div class="card-body table-responsive">
+                            <div class="row">
+                                <span class="col-lg-6 col-md-12"><b>Téléphone :</b>Non renseigné</span>
+                                <span class="col-lg-6 col-md-12"><b>Email :</b>Non renseigné</span>
+                            </div>
+                            <div class="row">
+                                <span class="col-lg-12 col-md-12"><b>Adresse complète
+                                        :</b>{{ fiche.siege.adresse_ligne_1 }}&nbsp;{{ fiche.siege.code_postal }}&nbsp;{{ fiche.siege.ville }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--Etablissement-->
+                <div class="col-lg-6 col-md-12">
+                    <div class="card">
+                        <div class="card-header card-header-info">
+                            <h4 class="card-title">Établissements </h4>
+                            <p class="card-category">{{ fiche.nom_entreprise }}</p>
+                        </div>
+                        <div class="card-body table-responsive " style="max-height: 300px; overflow: auto;">
+                            <div *ngFor="let unite of fiche.etablissements">
+                                <div class="mb-3">
+                                    <div class="row">
+                                        <div class="col-lg-1 col-md-1" style="text-align: center; margin: auto;">
+                                            <i class="material-icons text-danger"
+                                                *ngIf="!unite.etablissement_cesse">apartment</i>
+                                            <i class="material-icons text-secondary"
+                                                *ngIf="unite.etablissement_cesse">apartment</i>
+                                        </div>
+                                        <div class="col-lg-11 col-md-11">
+                                            <div class="row">
+                                                <span class="col-lg-12 col-md-12"><b>SIRET :
+                                                    </b>{{ unite.siret_formate }}</span>
+                                            </div>
+                                            <div class="row">
+                                                <span class="col-lg-12 col-md-12">Créé le
+                                                    {{ unite.date_de_creation | date }}</span>
+                                            </div>
+                                            <div class="row">
+                                                <span
+                                                    class="col-lg-12 col-md-12">{{ unite.adresse_ligne_1 }}&nbsp;{{ unite.code_postal }}&nbsp;{{ unite.ville }}</span>
+                                            </div>
+                                            <div class="row">
+                                                <span class="col-lg-12 col-md-12">{{ unite.libelle_code_naf }}</span>
+                                            </div>
+                                            <div class="row">
+                                                <span class="col-lg-12 col-md-12" *ngIf="!unite.etablissement_cesse">Cet
+                                                    établissement
+                                                    est <b>en activité.</b></span>
+                                                <span class="col-lg-12 col-md-12" *ngIf="unite.etablissement_cesse">Cet
+                                                    établissement
+                                                    est <b>fermé.</b></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <!--dirigeant-->
+                <div class="col-lg-6 col-md-12">
+                    <div class="card">
+                        <div class="card-header card-header-success">
+                            <h4 class="card-title">Dirigeants </h4>
+                            <p class="card-category">{{ fiche.nom_entreprise }}</p>
+                        </div>
+                        <div class="card-body table-responsive" style="max-height: 300px; overflow: auto;">
+                            <div *ngFor="let dirigeant of fiche.representants">
+                                <div class="mb-3">
+                                    <div class="row">
+                                        <span class="col-lg-4 col-md-6"><b>{{ dirigeant.qualite }}</b></span>
+                                        <span class="col-lg-8 col-md-6">Occupe ce poste depuis le
+                                            {{ dirigeant.date_prise_de_poste | date }}</span>
+                                    </div>
+                                    <div class="row">
+                                        <span class="col-lg-12 col-md-12" *ngIf="!dirigeant.denomination">
+                                            {{ dirigeant.nom }}&nbsp;{{ dirigeant.prenom }}</span>
+                                        <span class="col-lg-12 col-md-12" *ngIf="dirigeant.denomination">
+                                            {{ dirigeant.denomination }}</span>
+                                    </div>
+                                    <div class="row">
+                                        <span class="col-lg-12 col-md-12"
+                                            *ngIf="!dirigeant.denomination">{{ dirigeant.age }}
+                                            ans</span>
+                                        <span class="col-lg-12 col-md-12"
+                                            *ngIf="dirigeant.denomination"><b>SIREN:</b>{{ dirigeant.siren }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <span *ngIf="fiche.representants.length==0">
+                                non renseigné
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <!--Actes-->
+                <div class="col-lg-6 col-md-12">
+                    <div class="card">
+                        <div class="card-header card-header-success">
+                            <h4 class="card-title">Actes </h4>
+                            <p class="card-category">{{ fiche.nom_entreprise }}</p>
+                        </div>
+                        <div class="card-body table-responsive" style="max-height: 300px; overflow: auto;">
+                            <div *ngFor="let depot of fiche.depots_actes">
+                                <div class="row mb-4">
+                                    <div class="col-lg-7 col-sm-7">
+                                        <div *ngFor="let acte of depot.actes">
+                                            <span>-{{acte.type}}:{{acte.decision}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-5 col-sm-5">
+                                        <a class="nav-link" (click)="getDocumentEntrepriseByToken(depot.token)"
+                                            *ngIf="depot.disponible">
+                                            <i class="material-icons text-danger">picture_as_pdf</i>
+                                            {{depot.date_depot_formate}}
+                                        </a>
+                                        <a class="nav-link text-secondary" *ngIf="!depot.disponible">
+                                            <i class="material-icons">picture_as_pdf</i>
+                                            {{depot.date_depot_formate}}
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <span *ngIf="fiche.representants.length==0">
+                                non renseigné
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--Compte-->
+            <div class="row">
+                <div class="col-lg-6 col-md-12">
+                    <div class="card">
+                        <div class="card-header card-header-primary">
+                            <h4 class="card-title">Comptes annuels</h4>
+                            <p class="card-category">{{ fiche.nom_entreprise }}</p>
+                        </div>
+                        <div class="card-body table-responsive" style="max-height: 300px; overflow: auto;">
+                            <div *ngFor="let compte of fiche.comptes">
+                                <div class="row mb-4">
+                                    <div class="col-lg-7 col-sm-7">
+                                        <span>Comptes annuels {{compte.annee_cloture}}</span>
+                                    </div>
+                                    <div class="col-lg-5 col-sm-5">
+                                        <a class="nav-link" (click)="getDocumentEntrepriseByToken(compte.token)"
+                                            *ngIf="compte.disponible">
+                                            <i class="material-icons text-danger">picture_as_pdf</i>
+                                            {{compte.date_depot_formate}}
+                                        </a>
+                                        <a class="nav-link text-secondary" *ngIf="!compte.disponible">
+                                            <i class="material-icons">picture_as_pdf</i>
+                                            {{compte.date_depot_formate}}
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <span *ngIf="fiche.representants.length==0">
+                                non renseigné
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <!--bodacc-->
+                <div class="col-lg-6 col-md-12">
+                    <div class="card">
+                        <div class="card-header card-header-primary">
+                            <h4 class="card-title">Annonces BODACC</h4>
+                            <p class="card-category">{{ fiche.nom_entreprise }}</p>
+                        </div>
+                        <div class="card-body table-responsive" style="max-height: 300px; overflow: auto;">
+                            <div *ngFor="let bodacc of fiche.publications_bodacc">
+
+                                <div class="container-fluid ">
+                                    <div class="mb-4">
+                                        <span class="row">
+                                            <div class="col-lg-9 col-sm-9">
+                                                <div class="row">
+                                                    <h4><b>{{bodacc.type}}&nbsp;</b></h4>
+                                                    <span *ngIf="bodacc.rcs">&nbsp;RCS {{bodacc.rcs}}</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3 col-sm-3" style="text-align: right;">
+                                                &nbsp;<b>{{bodacc.date}}</b></div>
+                                        </span>
+                                        <div class="row "><span *ngIf="bodacc.denomination"><b>Dénomination
+                                                    :&nbsp;</b>{{bodacc.denomination}}</span></div>
+                                        <div class="row "><span *ngIf="bodacc.capital"><b>Capital
+                                                    :&nbsp;</b>{{bodacc.capital|number}} €</span></div>
+                                        <div class="row "><span *ngIf="bodacc.adresse"><b>Adresse
+                                                    :&nbsp;</b>{{bodacc.adresse}} </span></div>
+                                        <div class="row "><span *ngIf="bodacc.description"><b>Description
+                                                    :&nbsp;</b>{{bodacc.description}} </span></div>
+                                        <div class="row "><span *ngIf="bodacc.typeDepot"><b>Type de dépôt
+                                                    :&nbsp;</b>{{bodacc.typeDepot}} </span></div>
+                                        <div class="row "><span *ngIf="bodacc.dateCloture"><b>Date de cloture
+                                                    :&nbsp;</b>{{bodacc.dateCloture}} </span> </div>
+                                        <div style="text-align: right;">
+                                            <a class="nav-link"
+                                                (click)="goToBodaccParution(bodacc.numeroParution,bodacc.bodacc,bodacc.numeroAnnonce)">
+                                                Bodacc {{bodacc.bodacc}} n° {{bodacc.numeroParution}}, annonce
+                                                n°{{bodacc.numeroAnnonce}}
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <span *ngIf="fiche.representants.length==0">
+                                non renseigné
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>                                          
+        </div>
+    </div>
+</div>

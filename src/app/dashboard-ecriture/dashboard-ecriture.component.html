@@ -1,0 +1,155 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header card-header-warning">
+                    <h4 class="card-title ">Ecritures disparues et apparues dans une période</h4>
+                    <p class="card-category"> Warning</p>
+                </div>
+                <div class="card-body" style="max-height: 300px; overflow: auto;">
+                    <div class="table-responsive-sm">
+                        <table class="table table-sm">
+                            <thead class=" text-primary">
+                                <th *ngFor="let col of colListEcriture">
+                                    {{ col }}
+                                </th>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let rowTitle of rowListEcriture ; let i = index">
+                                    <td>
+                                        {{ rowTitle }}
+                                    </td>
+                                    <td *ngFor="let col of colListEcriture ; let j = index">
+                                        <i class="material-icons text-success" *ngIf="mapEcriture[i][j]==0">check</i>
+                                        <i class="material-icons text-danger"
+                                            *ngIf="mapEcriture[i][j]>0 && mapEcriture[i][j]">error_outline</i>
+                                        <span *ngIf="mapEcriture[i][j]>0" class="text-danger">
+                                            {{ mapEcriture[i][j] |  number:'0.0':'fr' }}
+                                        </span>
+                                        <span *ngIf="mapEcriture[i][j]=='null'">
+                                            <i class="material-icons text-success">check</i>
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+    <div class="row">
+        <div class="col-md-4">
+            <mat-form-field appearance="fill">
+                <mat-label>Période</mat-label>
+                <mat-select [(value)]="periode" (selectionChange)="relodePeriode($event)">
+                    <mat-option *ngFor="let periode of listPeriode " [value]="periode">{{periode}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </div>    
+    <div class="row" *ngIf="ecritureDisparues">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header card-header-danger">
+                    <h4 class="card-title ">Détails écritures disparues</h4>
+                    <p class="card-category"> {{periode}}</p>
+                </div>
+                <div class="card-body" style="max-height: 300px; overflow: auto;">
+                    <div class="table-responsive-sm">
+                        <table class="table table-sm">
+                            <thead class=" text-primary">
+                                <th class="text-center">Code journal</th>
+                                <th class="text-center">Libellé journal</th>
+                                <th class="text-center">Numéro écriture</th>
+                                <th class="text-center">Date écriture</th>
+                                <th class="text-center">Compte</th>
+                                <th class="text-center">Libellé compte</th>
+                                <th class="text-center">Réf pièce</th>
+                                <th class="text-center">Date pièce</th>
+                                <th class="text-center">Libellé écriture</th>
+                                <th class="text-center">Débit</th>
+                                <th class="text-center">Crédit</th>
+                                <th class="text-center">Date valide</th>
+                                <th class="text-center">Date insertion</th>
+                                <th class="text-center">Fichier FEC</th>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of ecritureDisparues ; let i = index">
+                                    <td class="text-center">{{ row.journalCode }}</td>
+                                    <td class="text-center">{{ row.journalLib }}</td>
+                                    <td class="text-center">{{ row.ecritureNum }}</td>
+                                    <td class="text-center">{{ row.ecritureDate }}</td>
+                                    <td class="text-center">{{ row.compteNum }}</td>
+                                    <td class="text-center">{{ row.compteLib }}</td>
+                                    <td class="text-center">{{ row.pieceRef }}</td>
+                                    <td class="text-center">{{ row.pieceDate }}</td>
+                                    <td class="text-center">{{ row.ecritureLib }}</td>
+                                    <td class="text-right text-primary"><b>{{ row.debit |  number:'0.0-0':'fr' }}</b>
+                                    </td>
+                                    <td class="text-right text-primary"><b>{{ row.credit |  number:'0.0-0':'fr' }}</b>
+                                    </td>
+                                    <td class="text-center">{{ row.valideDate }}</td>
+                                    <td class="text-center">{{ row.insertDate }}</td>
+                                    <td class="text-center">{{ row.filename }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" *ngIf="ecritureApparues">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header card-header-danger">
+                    <h4 class="card-title ">Détails écritures apparues</h4>
+                    <p class="card-category"> {{periode}}</p>
+                </div>
+                <div class="card-body" style="max-height: 300px; overflow: auto;">
+                    <div class="table-responsive-sm">
+                        <table class="table table-sm">
+                            <thead class=" text-primary">
+                                <th class="text-center">Code journal</th>
+                                <th class="text-center">Libellé journal</th>
+                                <th class="text-center">Numéro écriture</th>
+                                <th class="text-center">Date écriture</th>
+                                <th class="text-center">Compte</th>
+                                <th class="text-center">Libellé compte</th>
+                                <th class="text-center">Réf pièce</th>
+                                <th class="text-center">Date pièce</th>
+                                <th class="text-center">Libellé écriture</th>
+                                <th class="text-center">Débit</th>
+                                <th class="text-center">Crédit</th>
+                                <th class="text-center">Date valide</th>
+                                <th class="text-center">Date insertion</th>
+                                <th class="text-center">Fichier FEC</th>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of ecritureApparues ; let i = index">
+                                    <td class="text-center">{{ row.journalCode }}</td>
+                                    <td class="text-center">{{ row.journalLib }}</td>
+                                    <td class="text-center">{{ row.ecritureNum }}</td>
+                                    <td class="text-center">{{ row.ecritureDate }}</td>
+                                    <td class="text-center">{{ row.compteNum }}</td>
+                                    <td class="text-center">{{ row.compteLib }}</td>
+                                    <td class="text-center">{{ row.pieceRef }}</td>
+                                    <td class="text-center">{{ row.pieceDate }}</td>
+                                    <td class="text-center">{{ row.ecritureLib }}</td>
+                                    <td class="text-right text-primary"><b>{{ row.debit |  number:'0.0-0':'fr' }}</b>
+                                    </td>
+                                    <td class="text-right text-primary"><b>{{ row.credit |  number:'0.0-0':'fr' }}</b>
+                                    </td>
+                                    <td class="text-center">{{ row.valideDate }}</td>
+                                    <td class="text-center">{{ row.insertDate }}</td>
+                                    <td class="text-center">{{ row.filename }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

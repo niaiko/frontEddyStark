@@ -1,0 +1,66 @@
+<div class="{{divClass}}">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-danger">
+                        <h4 class="card-title">Dernier transmission de fichier</h4>
+                        <p class="card-category">{{siren}}</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="container" *ngFor="let dernier of dernierEnvois">
+                            <div class="mb-3">
+                                <div class="row">
+                                    <span class="text-danger"><b>{{dernier.nomFichier}}</b></span>
+                                </div>
+                                <div class="row">
+                                    <span>Transmis le <b>{{ dernier.dateEnvoieParis }}</b></span>
+                                    <span>
+                                        <span *ngIf="dernier.age===0" class="badge badge-success"> aujourd'hui </span>
+                                        <span *ngIf="dernier.age>=1">
+                                            &nbsp;il y a
+                                            <span *ngIf="dernier.age===1" class="badge badge-success">{{ dernier.age }}
+                                                jour</span>
+                                            <span *ngIf="dernier.age>1 && dernier.age<20" class="badge badge-success">
+                                                {{ dernier.age }}
+                                                jours</span>
+                                            <span *ngIf="dernier.age>=20 && dernier.age<30" class="badge badge-warning">
+                                                {{ dernier.age }}
+                                                jours</span>
+                                            <span *ngIf="dernier.age>=30" class="badge badge-danger"> {{ dernier.age }}
+                                                jours</span>
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-danger">
+                        <h4 class="card-title">Historique de transmission</h4>
+                        <p class="card-category">{{siren}}</p>
+                    </div>
+                    <div class="card-body" style="max-height: 300px; overflow: auto;">
+                        <div class="container" *ngFor="let historique of historiques">
+                            <div class="mb-3">
+                                <div class="row">
+                                    <span class="text-danger"><b>{{historique.nomFichier}}</b></span>
+                                </div>
+                                <div class="row">
+                                    <span>{{ historique.dateEnvoieParis }}</span>
+                                    <span> | {{ historique.typeFichier }}</span>
+                                    <span *ngIf="historique.observation"> | {{ historique.observation }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

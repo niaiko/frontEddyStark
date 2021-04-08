@@ -1,0 +1,131 @@
+<div class="main-content">       
+    <div class="row">
+        <div class="col-lg-6 col-md-12">
+            <div class="card">
+                <div class="card-header card-header-danger">
+                    <h4 class="card-title ">Fichier</h4>
+                    <!--<p class="card-category"> CheckList</p>-->
+                </div>
+                <div class="card-body" >
+                    <form [formGroup]="fileUploadForm" (ngSubmit)="onFormSubmit()">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="head-title margin-top-8"><span>FEC ou OFX</span></h6>
+                            </div>
+                            <div class="col-sm-9">
+                                <div class="custom-file">
+                                    <label class="mat-raised-button btn-secondary" for="customFile">Choisir un fichier</label>       
+                                    <label for="customFile" >{{fileInputLabel || 'Aucun fichier choisi'}}</label>                                            
+                                    <input type="file" accept=".txt, .TXT, .Txt, .ofx, .OFX, .Tsv, .TSV, .tsv, .csv, .CSV"
+                                        id="customFile" name="uploadedFile" class="input-file" 
+                                        (change)="onSelect($event)" #UploadFileInput >                                    
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" *ngIf="isOfx">
+                            <div class="col-sm-3">
+                                <h6 class="head-title margin-top-8"><span>Banque appropriée</span></h6>
+                            </div>
+                            <div class="col-sm-9">                               
+                                <mat-select [(value)]="banque"  class="form-control" formControlName="banque" (selectionChange)="onSelectBanque($event)">
+                                    <mat-option *ngFor="let banque of banques " [value]="banque.imputation">{{banque.libelle}}</mat-option>
+                                </mat-select>
+                            </div>                            
+                        </div>
+                        <!--<div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="head-title margin-top-8"><span>Fuseau horaire</span></h6>
+                            </div>
+                            <div class="col-sm-9">                               
+                                <mat-select [(value)]="fvalue"  class="form-control" formControlName="fuseaux" (selectionChange)="onSelect($event)">
+                                    <mat-option *ngFor="let fuseau of fuseaux " [value]="fuseau.region">{{fuseau.libelle}}</mat-option>
+                                </mat-select>
+                            </div>                            
+                        </div>-->
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h6 class="head-title margin-top-8"><span>Observation</span></h6>
+                            </div>
+                            <div class="col-sm-9">
+                                <textarea formControlName="observation" rows=4 cols=40 class="form-control"></textarea>
+                            </div>
+                        </div><br>            
+                        <div class="row">                       
+                            <div class="col-lg-12 col-md-12 text-right">
+                                <div>                                    
+                                    <mat-spinner diameter="40" *ngIf="loading" style="display: block; margin-left: 90%;"></mat-spinner>                                    
+                                </div>                                
+                                <button mat-raised-button color="primary" [disabled]="loading" type="submit" *ngIf="!loading">Envoyer</button>
+                            </div>
+                        </div> 
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-12">
+            <div class="card">
+                <div class="card-header card-header-danger">
+                    <h4 class="card-title">Paramètre</h4>
+                    <p class="card-category">Banque</p>
+                </div>
+                <div class="card-body"  style="max-height: 300px; overflow: auto;">
+                    <div class="container-fluid">
+                        <form form [formGroup]="form"  (ngSubmit)="onBanqueSubmit()">                                   
+                            <div class="row">
+                                <div class="col-lg-6 col-md-12">
+                                    <mat-form-field class="example-full-width">
+                                        <mat-label>Dénomination banque</mat-label>
+                                        <input matInput formControlName="banque" required> 
+                                        <mat-error *ngIf="hasError('banque', 'required')">Banque est requise</mat-error>                                     
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-lg-4 col-md-12">                                   
+                                    <mat-form-field class="example-full-width">
+                                        <mat-label>Compte d'imputation</mat-label>
+                                        <mat-select [(value)]="propositionBanque" (selectionChange)="relodePropositionBanque($event)" formControlName="imputation">
+                                            <mat-option *ngFor="let banque of propositionBanques " [value]="banque.imputation">{{banque.imputation}}</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>  
+                                <div class="col-lg-2 col-md-12 text-right">                                    
+                                    <button mat-raised-button color="primary" type="submit">Ajouter</button>
+                                </div>   
+                            </div>                                                              
+                        </form>
+                    </div>
+                    <mat-divider></mat-divider>
+                    <div *ngFor="let banque of banques">
+                        <div class="mb-3">
+                            <div class="row">
+                                <span class="col-lg-9 col-md-9">
+                                    <div class="row">
+                                        <span class="col-lg-9 col-md-9">
+                                            <b>{{ banque.libelle }}</b>       
+                                        </span>
+                                    </div>
+                                    <div class="row">
+                                        <span class="col-lg-3 col-md-3" >  
+                                            {{ banque.imputation }}
+                                        </span>                                                                       
+                                    </div> 
+                                </span>
+                                <span class="col-lg-3 col-md-3 text-right">
+                                    <!--<button mat-raised-button type="button" matTooltip="modifier AJ" [matTooltipPosition]="'above'" class="btn btn-primary btn-link btn-sm btn-just-icon">
+                                        <i class="material-icons">edit</i>
+                                    </button>-->
+                                    <button mat-raised-button type="button" matTooltip="supprimer banque" [matTooltipPosition]="'above'" class="btn btn-danger btn-link btn-sm btn-just-icon"
+                                    (click)="deleteBanque(banque.imputation,banque.libelle)" >
+                                        <i class="material-icons">close</i>
+                                    </button>
+                                </span>
+                            </div>                                
+                        </div>                                                       
+                    </div>
+                    <div *ngIf="!banques">
+                        Aucune donnée
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>   
+</div>

@@ -1,0 +1,317 @@
+<div class="{{divClass}}">
+    <form form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="row">
+            <div class="col-lg-2 col-md-12">
+                <mat-form-field appearance="fill">
+                    <mat-label>Exercice</mat-label>
+                    <mat-select [(value)]="exercice" (selectionChange)="relodeExercice($event)">
+                        <mat-option *ngFor="let exo of listExercice " [value]="exo.exo">{{exo.exo}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="col-lg-2 col-md-12">
+                <mat-form-field appearance="fill">
+                    <mat-label>Date début</mat-label>
+                    <input matInput [matDatepicker]="picker1" formControlName="debut" >
+                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                    <mat-datepicker #picker1></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="col-lg-2 col-md-12">
+                <mat-form-field appearance="fill">
+                    <mat-label>Date fin</mat-label>
+                    <input matInput [matDatepicker]="picker2"  formControlName="fin" >
+                    <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                    <mat-datepicker #picker2></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="col-lg-2 col-md-12"> 
+                <div>                                    
+                    <mat-spinner diameter="40" *ngIf="loading" ></mat-spinner>                                    
+                </div>                                   
+                <button mat-raised-button color="primary" type="submit" *ngIf="!loading">Recalculer</button>
+            </div>  
+        </div>
+    </form>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-4 col-md-6 col-sm-6">
+                <div class="card card-stats">
+                    <div class="card-header card-header-warning card-header-icon">
+                        <div class="card-icon">
+                            <i class="material-icons">euro</i>
+                        </div>
+                        <p class="card-category">Chiffre d'affaire</p>
+                        <h3 class="card-title">
+                            {{ recap.ca | number:'0.0-0':'fr' }}€
+                        </h3>
+                    </div>
+                    <div class="card-footer">
+                        <div class="stats">
+                            <div class="row">
+                                <i class="material-icons">access_time</i>
+                                Mise à jour le&nbsp;<b
+                                    *ngIf="lastUpdate">{{ lastUpdate.dateEnvoieParis }}</b>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-6">
+                <div class="card card-stats">
+                    <div class="card-header card-header-success card-header-icon">
+                        <div class="card-icon">
+                            <i class="material-icons">store</i>
+                        </div>
+                        <p class="card-category">Résultat d'exploitation</p>
+                        <h3 class="card-title">{{recap.resExp | number:'0.0-0':'fr' }}€</h3>
+                    </div>
+                    <div class="card-footer">
+                        <div class="stats">
+                            <i class="material-icons">access_time</i>
+                            Mise à jour le&nbsp;<b *ngIf="lastUpdate">{{ lastUpdate.dateEnvoieParis }}</b>                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-6">
+                <div class="card card-stats">
+                    <div class="card-header card-header-danger card-header-icon">
+                        <div class="card-icon">
+                            <i class="material-icons">account_balance_wallet</i>
+                        </div>
+                        <p class="card-category">Résultat Net</p>
+                        <h3 class="card-title">{{recap.resNet | number:'0.0-0':'fr' }}€</h3>
+                    </div>
+                    <div class="card-footer">
+                        <div class="stats">
+                            <i class="material-icons">access_time</i>
+                            Mise à jour le&nbsp;<b *ngIf="lastUpdate">{{ lastUpdate.dateEnvoieParis }}</b>                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!--CA-->
+            <div class="col-md-4">
+                <div class="card card-chart">
+                    <div class="card-header card-header-warning">
+                        <!--<div class="ct-chart" id="caChart"></div>-->
+                        <canvas baseChart [datasets]="dataCA" [labels]="labelCA" [options]="barChartOptions"
+                            [legend]="barChartLegend" [colors]="barChartColors" scales="barChartColors"
+                            [chartType]="barChartType">
+                        </canvas>
+                    </div>
+                    <div class="card-body">
+                        <h4 class="card-title">Chiffre d'affaire</h4>
+                    </div>
+                    <div class="card-footer">
+                        <div class="stats">
+                            <i class="material-icons">access_time</i>
+                            Mise à jour le&nbsp;<b *ngIf="lastUpdate">{{ lastUpdate.dateEnvoieParis }}</b>                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--Res Exp-->
+            <div class="col-md-4">
+                <div class="card card-chart">
+                    <div class="card-header card-header-success">
+                        <!--<div class="ct-chart" id="resExpChart"></div>-->
+                        <canvas baseChart [datasets]="dataResExp" [labels]="labelResExp" [colors]="barChartColors"
+                            [options]="barChartOptions" [legend]="barChartLegend" [chartType]="barChartType">
+                        </canvas>
+                    </div>
+                    <div class="card-body">
+                        <h4 class="card-title">Résultat d'exploitation</h4>
+                    </div>
+                    <div class="card-footer">
+                        <div class="stats">
+                            <i class="material-icons">access_time</i>
+                            Mise à jour le&nbsp;<b *ngIf="lastUpdate">{{ lastUpdate.dateEnvoieParis }}</b>                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Res Net-->
+            <div class="col-md-4">
+                <div class="card card-chart">
+                    <div class="card-header card-header-danger">
+                        <!--<div class="ct-chart" id="resNetChart"></div>-->
+                        <canvas baseChart [datasets]="dataResNet" [labels]="labelResNet" [options]="barChartOptions"
+                            [legend]="barChartLegend" [colors]="barChartColors" [chartType]="barChartType">
+                        </canvas>
+                    </div>
+                    <div class="card-body">
+                        <h4 class="card-title">Résultat Net</h4>
+                    </div>
+                    <div class="card-footer">
+                        <div class="stats">
+                            <i class="material-icons">access_time</i>
+                            Mise à jour le&nbsp;<b *ngIf="lastUpdate">{{ lastUpdate.dateEnvoieParis }}</b>                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-success">
+                        <h4 class="card-title ">KPI</h4>
+                        <!--<p class="card-category"> CheckList</p>-->
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive-sm">
+                            <table class="table table-sm">
+                                <thead class=" text-primary">
+                                    <th *ngFor="let col of colListEcriture" class="text-center">
+                                        {{ col }}
+                                    </th>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let rowTitle of rowListEcriture ; let i = index">
+                                        <td class="text-right">
+                                            {{ rowTitle }}
+                                        </td>
+                                        <td *ngFor="let col of colListEcriture ; let j = index" class="text-right">
+                                            <span *ngIf="map[i][j]!=0 && map[i][j]"
+                                                class="text-primary">{{ map[i][j] |  number:'0.0-0':'fr' }}€</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-danger">
+                        <h4 class="card-title ">Impôt sur les sociétés</h4>
+                        <p class="card-category"> IS calculé par comptalert, et il faut rajouter ces chiffres au CA, Res Net, Res Exp</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive-sm">
+                            <table class="table table-sm">
+                                <thead class=" text-primary">
+                                    <th>
+                                    </th>
+                                    <th *ngFor="let col of periodeOfLastFilename" class="text-center">
+                                        {{ col }}
+                                    </th>
+                                </thead>
+                                <tbody>
+                                    <td class="text-right">
+                                        Impôt sur les sociétés
+                                    </td>
+                                    <td *ngFor="let col of periodeOfLastFilename ; let j = index" class="text-right">
+                                        <span *ngIf="getImpotVal(col)!=0 && getImpotVal(col)"
+                                            class="text-primary">{{ getImpotVal(col) |  number:'0.0-0':'fr' }}€</span>
+                                        <span *ngIf="!getImpotVal(col)" class="text-primary">0€</span>
+                                    </td>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-warning">
+                        <h4 class="card-title ">Besoin en Fond de Roulement</h4>
+                        <!--<p class="card-category"> CheckList</p>-->
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive-sm">
+                            <table class="table table-sm">
+                                <thead class=" text-primary">
+                                    <th *ngFor="let col of colListEcritureBFR" class="text-center">
+                                        {{ col }}
+                                    </th>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let rowTitle of rowListEcritureBFR ; let i = index">
+                                        <td class="text-right text-primary"
+                                            *ngIf="rowTitle=='Besoin en fonds de roulement (I-II)' || rowTitle=='Variation BFR(I-II)' || rowTitle=='Total des ressources (II)' || rowTitle=='Total des besoins (I)'">
+                                            <b><u>{{ rowTitle }}</u></b>
+                                        </td>
+                                        <td class="text-right"
+                                            *ngIf="rowTitle!='Besoin en fonds de roulement (I-II)' && rowTitle!='Variation BFR(I-II)' && rowTitle!='Total des ressources (II)' && rowTitle!='Total des besoins (I)'">
+                                            {{ rowTitle }}
+                                        </td>
+                                        <td *ngFor="let col of colListEcritureBFR ; let j = index" class="text-right">
+                                            <span
+                                                *ngIf="mapBFR[i][j] && (rowTitle=='Besoin en fonds de roulement (I-II)' || rowTitle=='Variation BFR(I-II)' || rowTitle=='Total des ressources (II)' || rowTitle=='Total des besoins (I)')"
+                                                class="text-primary">
+                                                <span *ngIf="mapBFR[i][j]<0">
+                                                    ({{ -1*mapBFR[i][j] |  number:'0.0-0':'fr' }})€
+                                                </span>
+                                                <span *ngIf="mapBFR[i][j]>=0">
+                                                    {{ mapBFR[i][j] |  number:'0.0-0':'fr' }}€
+                                                </span>
+                                            </span>
+                                            <span
+                                                *ngIf="mapBFR[i][j] && (rowTitle!='Besoin en fonds de roulement (I-II)' && rowTitle!='Variation BFR(I-II)' && rowTitle!='Total des ressources (II)' && rowTitle!='Total des besoins (I)')">
+                                                <span *ngIf="mapBFR[i][j]<0">
+                                                    ({{ -1*mapBFR[i][j] |  number:'0.0-0':'fr' }})€
+                                                </span>
+                                                <span *ngIf="mapBFR[i][j]>=0">
+                                                    {{ mapBFR[i][j] |  number:'0.0-0':'fr' }}€
+                                                </span>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-primary">
+                        <h4 class="card-title ">Capacité d'autofinancement</h4>
+                        <!--<p class="card-category"> CheckList</p>-->
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive-sm">
+                            <table class="table table-sm">
+                                <thead class=" text-primary">
+                                    <th *ngFor="let col of colListEcritureCAF" class="text-center">
+                                        {{ col }}
+                                    </th>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let rowTitle of rowListEcritureCAF ; let i = index">
+                                        <td class="text-right">
+                                            {{ rowTitle }}
+                                        </td>
+                                        <td *ngFor="let col of colListEcritureCAF ; let j = index" class="text-right">
+                                            <span *ngIf="mapCAF[i][j]">{{ mapCAF[i][j] |  number:'0.0-0':'fr' }}€</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <app-dashboard-actif-passif *ngIf="!isUser()"></app-dashboard-actif-passif>
+    <app-dashboard-checklist *ngIf="!isUser()"></app-dashboard-checklist>
+    <app-dashboard-ecriture *ngIf="!isUser()"></app-dashboard-ecriture>
+</div>

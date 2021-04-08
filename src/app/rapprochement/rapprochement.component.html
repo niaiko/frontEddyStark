@@ -1,0 +1,87 @@
+<div class="{{divClass}}">
+    <div class="row">
+        <div class="col-lg-8 col-md-12">
+            <form form [formGroup]="form">
+                <div class="row">
+                    <div class="col-lg-2 col-md-12">
+                        <mat-form-field appearance="fill">
+                            <mat-label>Exercice</mat-label>
+                            <mat-select [(value)]="exercice" (selectionChange)="relodeExercice($event)">
+                                <mat-option *ngFor="let exo of listExercice " [value]="exo.exo">{{exo.exo}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-lg-4 col-md-12">
+                        <mat-form-field appearance="fill">
+                            <mat-label>Banque</mat-label>
+                            <mat-select [(value)]="banque" formControlName="imputation" (selectionChange)="onSelectBanque($event)">
+                                <mat-option *ngFor="let banque of banques " [value]="banque.imputation">{{banque.libelle}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>                                      
+                    <div class="col-lg-3 col-md-12">
+                        <mat-form-field appearance="fill">
+                            <mat-label>Date début</mat-label>
+                            <input matInput [matDatepicker]="picker1" (dateChange)="setDateDebut($event)" formControlName="dateDebut">
+                            <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                            <mat-datepicker #picker1></mat-datepicker>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-lg-3 col-md-12">
+                        <mat-form-field appearance="fill">
+                            <mat-label>Date fin</mat-label>
+                            <input matInput [matDatepicker]="picker2" (dateChange)="setDateFin($event)" formControlName="dateFin">
+                            <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                            <mat-datepicker #picker2></mat-datepicker>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-12 col-md-12">
+            <div class="card">
+                <div class="card-header card-header-danger">
+                    <h4 class="card-title">Rapprochement</h4>
+                    <p class="card-category">{{ banque }}</p>
+                </div>
+                <div class="card-body" >
+                    <div  class="col-lg-12">
+                        <table class="table table-sm" fixed-header>
+                            <thead class=" text-primary table-head">
+                                <th class="text-center">Date</th>                                
+                                <th class="text-center">Débit livre</th>
+                                <th class="text-center">Crédit livre</th>
+                                <th class="text-center">Débit relevé</th>
+                                <th class="text-center">Crédit relevé</th>
+                                <th class="text-center">Cumul livre</th>
+                                <th class="text-center">Cumul relevé</th>
+                                <th class="text-center">Etat</th>
+                            </thead>
+                            <tbody >
+                                <tr *ngFor="let rappro of rapprochement ">
+                                    <td class="text-center">{{ rappro.date }}</td>                                    
+                                    <td class="text-right">{{ rappro.debitLivre |  number:'0.0-0':'fr' }}€</td>
+                                    <td class="text-right">{{ rappro.creditLivre |  number:'0.0-0':'fr' }}€</td>
+                                    <td class="text-right">{{ rappro.debitReleve  |  number:'0.0-0':'fr' }}€</td>
+                                    <td class="text-right">{{ rappro.creditReleve |  number:'0.0-0':'fr' }}€</td>
+                                    <td class="text-right">{{ rappro.cumulLivre |  number:'0.0-0':'fr' }}€</td>
+                                    <td class="text-right">{{ rappro.cumulReleve |  number:'0.0-0':'fr' }}€</td>
+                                    <td class="text-center">
+                                        <i class="material-icons text-warning" *ngIf="rappro.flagValid==0">error_outline</i>
+                                        <i class="material-icons text-primary" *ngIf="rappro.flagValid!=0 && rappro.flagValid">check</i>  
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div *ngIf="!rapprochement">
+                        Aucune donnée
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,99 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-4">
+            <mat-form-field appearance="fill">
+                <mat-label>Période</mat-label>
+                <mat-select [(value)]="periode" (selectionChange)="relodePeriode($event)">
+                    <mat-option *ngFor="let periode of listPeriode " [value]="periode">{{periode}}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header card-header-danger">
+                    <h4 class="card-title ">Actif disponible</h4>
+                    <p class="card-category"> {{periode}}</p>
+                </div>
+                <div class="card-body" style="max-height: 300px; overflow: auto;">
+                    <div class="table-responsive-sm">
+                        <table class="table table-sm">
+                            <thead class=" text-primary">
+                                <th>Compte</th>
+                                <th>Solde de la période</th>
+                                <th>Solde à la date de redressement</th>
+                                <th>Différence</th>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of actifN2 ">
+                                    <td class="text-right">{{ row.compte }}</td>
+                                    <td class="text-right" *ngIf="row.soldePeriode<0">({{ -1*(row.soldePeriode) |  number:'0.0-0':'fr' }})</td>
+                                    <td class="text-right" *ngIf="row.soldePeriode>=0">{{ row.soldePeriode |  number:'0.0-0':'fr'}}</td>
+                                    <td class="text-right" *ngIf="row.soldeRedressement<0">({{ -1*(row.soldeRedressement) |  number:'0.0-0':'fr' }})</td>
+                                    <td class="text-right" *ngIf="row.soldeRedressement>=0">{{ row.soldeRedressement |  number:'0.0-0':'fr' }}</td>
+                                    <td class="text-right" *ngIf="row.solde<0">({{ -1*(row.solde) |  number:'0.0-0':'fr' }})</td>
+                                    <td class="text-right" *ngIf="row.solde>=0">{{ row.solde |  number:'0.0-0':'fr' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header card-header-danger">
+                    <h4 class="card-title ">Passif exigible</h4>
+                    <!--<p class="card-category"> {{periode}}</p>-->
+                </div>
+                <div class="card-body" style="max-height: 300px; overflow: auto;">
+                    <div class="table-responsive-sm">
+                        <table class="table table-sm">                            
+                            <tbody>
+                                <tr *ngFor="let row of passif ">
+                                    <td class="text-right">Montant</td>
+                                    <td class="text-right" *ngIf="row.montant<0">({{ -1*(row.montant) |  number:'0.0-0':'fr' }})</td>
+                                    <td class="text-right" *ngIf="row.montant>=0">{{ row.montant |  number:'0.0-0':'fr'}}</td>                                    
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header card-header-danger">
+                    <h4 class="card-title ">Actif disponible détail</h4>
+                    <p class="card-category"> {{periode}}</p>
+                </div>
+                <div class="card-body" style="max-height: 300px; overflow: auto;">
+                    <div class="table-responsive-sm">
+                        <table class="table table-sm">
+                            <thead class=" text-primary">
+                                <th>Compte</th>
+                                <th>Solde de la période</th>
+                                <th>Solde à la date de redressement</th>
+                                <th>Différence</th>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let row of actifN3 ">
+                                    <td>{{ row.compte }}</td>
+                                    <td class="text-right" *ngIf="row.soldePeriode<0">({{ -1*(row.soldePeriode) |  number:'0.0-0':'fr' }})</td>
+                                    <td class="text-right" *ngIf="row.soldePeriode>=0">{{ row.soldePeriode |  number:'0.0-0':'fr'}}</td>
+                                    <td class="text-right" *ngIf="row.soldeRedressement<0">({{ -1*(row.soldeRedressement) |  number:'0.0-0':'fr' }})</td>
+                                    <td class="text-right" *ngIf="row.soldeRedressement>=0">{{ row.soldeRedressement |  number:'0.0-0':'fr' }}</td>
+                                    <td class="text-right" *ngIf="row.solde<0">({{ -1*(row.solde) |  number:'0.0-0':'fr' }})</td>
+                                    <td class="text-right" *ngIf="row.solde>=0">{{ row.solde |  number:'0.0-0':'fr' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
